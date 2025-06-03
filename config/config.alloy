@@ -1,0 +1,112 @@
+otelcol.receiver.otlp "default" {
+  debug_metrics {
+    disable_high_cardinality_metrics = true
+  }
+
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    logs    = [otelcol.processor.batch.default.input]
+    traces  = [otelcol.processor.batch.default.input]
+  }
+}
+
+otelcol.processor.batch "default" {
+  output {
+    logs    = [otelcol.exporter.loki.default.input]
+    traces  = [otelcol.exporter.otlp.default.input, otelcol.processor.transform.default.input]
+  }
+}
+
+// TEMPO
+
+otelcol.processor.transform "default" {
+  error_mode = "ignore"
+
+  trace_statements {
+    context = "resource"
+    statements = [
+      // We keep only the "service.name" and "special.attr" resource attributes,
+      // because they are the only ones which otelcol.connector.spanmetrics needs.
+      //
+      // There is no need to list "span.name", "span.kind", and "status.code"
+      // here because they are properties of the span (and not resource attributes):
+      // https://github.com/open-telemetry/opentelemetry-proto/blob/v1.0.0/opentelemetry/proto/trace/v1/trace.proto
+      `keep_keys(attributes, ["service.name", "n8n.workflow.id", "n8n.execution.id"])`,
+    ]
+  }
+
+  output {
+    traces  = [otelcol.connector.spanmetrics.default.input]
+  }
+}
+
+otelcol.exporter.otlp "default" {
+  client {
+    endpoint = "tempo:4319"
+    tls {
+			insecure = true
+		}
+  }
+}
+
+// LOKI
+
+discovery.docker "containers" {
+  host = "unix:///var/run/docker.sock"
+}
+
+loki.source.docker "default" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.docker.linux.targets
+  labels     = {"app" = "docker"}
+  forward_to = [loki.write.local.receiver]
+}
+
+
+otelcol.exporter.loki "default" {
+  forward_to = [loki.write.default.receiver]
+}
+
+loki.write "default" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}
+
+// PROMETHEUS
+
+// Insert resource attributes as metric data point attributes.
+otelcol.connector.spanmetrics "default" {
+  histogram {
+    explicit {}
+  }
+
+  dimension {
+    name = "n8n.workflow.id"
+  }
+
+  dimension {
+    name = "n8n.execution.id"
+  }
+  
+  output {
+    metrics = [otelcol.exporter.prometheus.default.input]
+  }
+}
+
+otelcol.exporter.prometheus "default" {
+  forward_to = [prometheus.remote_write.prometheus.receiver]
+}
+
+prometheus.remote_write "prometheus" {
+  endpoint {
+    url = "http://prometheus:9090/api/v1/write"
+  }
+}

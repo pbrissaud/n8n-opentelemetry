@@ -1,0 +1,73 @@
+services:
+  n8n:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        N8N_VERSION: latest
+    develop:
+      watch:
+        - action: rebuild
+          path: ./
+          target: /opt/opentelemetry
+        - action: rebuild
+          path: ./Dockerfile
+    ports:
+      - "5678:5678"
+    environment:
+      OTEL_SERVICE_NAME: n8n
+      OTEL_SDK_DISABLED: false
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://alloy:4318
+      OTEL_LOG_LEVEL: info
+      OTEL_EXPORTER_OTLP_PROTOCOL: grpc
+    volumes:
+      - n8n_data:/home/node/.n8n
+
+  alloy:
+    image: grafana/alloy:latest
+    command: ["run", "--server.http.listen-addr=0.0.0.0:12345", "/etc/alloy/config.alloy"]
+    ports:
+      - "12345:12345"
+      - "4317:4317"
+      - "4318:4318"
+    volumes:
+      - ./config/config.alloy:/etc/alloy/config.alloy
+
+  loki:
+    image: grafana/loki:latest
+    command: [ "-config.file=/etc/loki.yaml" ]
+    volumes:
+      - ./config/loki.yaml:/etc/loki.yaml
+    ports:
+      - "3100:3100"
+
+  tempo:
+    image: grafana/tempo:latest
+    ports:
+      - "3200:3200"
+      - "4319:4319"
+    volumes:
+      - ./config/tempo.yaml:/etc/tempo/tempo-config.yaml
+    command: -config.file=/etc/tempo/tempo-config.yaml
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./config/grafana_provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+
+  prometheus:
+    image: prom/prometheus:latest
+    command: [ "--web.enable-remote-write-receiver", "--config.file=/etc/prometheus/prometheus.yml" ]
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./config/prometheus.yaml:/etc/prometheus/prometheus.yml
+
+volumes:
+  grafana_data:
+  n8n_data:
