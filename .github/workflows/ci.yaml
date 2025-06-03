@@ -41,7 +41,7 @@ jobs:
         with:
           images: ${{ github.repository }}
           tags: |
-            type=custom,tag=${{ matrix.n8n-version }}
+            type=raw,value=${{ matrix.n8n-version }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
