@@ -7,8 +7,8 @@ It's inspired by the work of [Stuart Johnson in the n8n community](https://commu
 ## Features 
 
 - Tracing of n8n workflows and nodes executions
-  > [!WARNING]
-  > Subnode executions are not traced yet. Open to PRs if you want to add this feature.
+> [!WARNING]
+> Subnode executions are not traced yet. Open to PRs if you want to add this feature.
 
 - Logging of n8n workflows and nodes executions in console (not sent in otlp) with Winston
 
