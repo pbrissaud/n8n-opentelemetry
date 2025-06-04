@@ -219,7 +219,7 @@ function setupN8nOpenTelemetry() {
                 })
                 const { data, ...filteredResult } = result
                 logger.info(`Workflow finished`, {
-                  ...workflowAttributes,
+                  workflowAttributes,
                   result: filteredResult,
                   spanContext: span.spanContext(),
                 })
