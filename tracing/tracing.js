@@ -211,12 +211,13 @@ function setupN8nOpenTelemetry() {
                   code: SpanStatusCode.ERROR,
                   message: String(err.message || err),
                 })
-                logger.error(`Workflow failed`, {workflowAttributes, spanContext: span.spanContext()})
+                logger.error(`Workflow failed`, {workflowAttributes, spanContext: span.spanContext(), error: err})
+              } else {
+                span.setStatus({
+                  code: SpanStatusCode.OK,
+                })
+                logger.info(`Workflow finished`, {workflowAttributes, spanContext: span.spanContext(), result})
               }
-              span.setStatus({
-                code: SpanStatusCode.OK,
-              })
-              logger.info(`Workflow finished`, {workflowAttributes, spanContext: span.spanContext()})
             },
             (error) => {
               span.recordException(error)
@@ -224,7 +225,7 @@ function setupN8nOpenTelemetry() {
                 code: SpanStatusCode.ERROR,
                 message: String(error.message || error),
               })
-              logger.error(`Workflow failed`, {workflowAttributes, spanContext: span.spanContext()})
+              logger.error(`Workflow failed`, {workflowAttributes, spanContext: span.spanContext(), error})
             },
           )
           .finally(() => {

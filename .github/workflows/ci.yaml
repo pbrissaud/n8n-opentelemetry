@@ -20,7 +20,7 @@ jobs:
       matrix:
         n8n-version:
           - '1.95.2'
-          - 'latest'
+          - '1.95.3'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
