@@ -183,6 +183,7 @@ function setupN8nOpenTelemetry() {
       const workflowId = wfData?.id ?? ''
       const workflowName = wfData?.name ?? ''
 
+
       const workflowAttributes = {
         'n8n.workflow.id': workflowId,
         'n8n.workflow.name': workflowName,
@@ -216,7 +217,12 @@ function setupN8nOpenTelemetry() {
                 span.setStatus({
                   code: SpanStatusCode.OK,
                 })
-                logger.info(`Workflow finished`, {workflowAttributes, spanContext: span.spanContext(), result})
+                const { data, ...filteredResult } = result
+                logger.info(`Workflow finished`, {
+                  ...workflowAttributes,
+                  result: filteredResult,
+                  spanContext: span.spanContext(),
+                })
               }
             },
             (error) => {
