@@ -4,9 +4,18 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'Dockerfile'
+      - 'entrypoint.sh'
+      - 'tracing/**'
+      - '.github/workflows/ci.yaml' # To trigger build when matrix is updated
   pull_request:
     branches:
       - main
+    paths:
+      - 'Dockerfile'
+      - 'entrypoint.sh'
+      - 'tracing/**'
 
 permissions:
   contents: read
