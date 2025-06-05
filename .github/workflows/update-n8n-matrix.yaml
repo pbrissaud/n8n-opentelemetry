@@ -1,0 +1,39 @@
+name: Update n8n Matrix
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-matrix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+          token: ${{ secrets.PAT }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Fetch latest n8n releases and update matrix
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+        run: |
+          python .github/scripts/update_n8n_matrix.py
+
+      - name: Commit changes
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore: update n8n-version matrix with latest releases'
+          file_pattern: '.github/workflows/ci.yaml'
