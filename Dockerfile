@@ -5,6 +5,7 @@ RUN apt-get update -y && apt-get install -y wget
 RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which sh)" sh -
 ENV PNPM_HOME="/root/.local/share/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
+RUN ln -s $PNPM_HOME/pnpm /usr/local/bin/pnpm
 
 FROM base AS prod-deps
 WORKDIR /app
