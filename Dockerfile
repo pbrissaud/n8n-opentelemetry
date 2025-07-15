@@ -1,7 +1,7 @@
 ARG N8N_VERSION="latest"
 
 FROM node:24-slim AS base
-RUN apt update && apt install wget
+RUN apt-get update -y && apt-get install -y wget 
 RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which sh)" sh -
 
 FROM base AS prod-deps
