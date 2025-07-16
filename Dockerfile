@@ -3,8 +3,6 @@ ARG N8N_VERSION="latest"
 FROM node:24-slim AS base
 RUN apt-get update -y && apt-get install -y wget 
 RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which sh)" sh -
-ENV PNPM_HOME="/root/.local/share/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
 
 FROM base AS prod-deps
 WORKDIR /app
@@ -16,7 +14,7 @@ FROM docker.n8n.io/n8nio/n8n:$N8N_VERSION
 USER root
 
 # Recopy pnpm
-COPY --from=base /root/.local/share/pnpm /usr/local/bin/pnpm
+COPY --from=base --chown=root:root --chmod=755 /root/.local/share/pnpm /root/.local/share/pnpm 
 
 # Create machine-id
 # This fixes OTEL log error messages
