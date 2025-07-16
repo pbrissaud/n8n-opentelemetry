@@ -15,9 +15,6 @@ FROM docker.n8n.io/n8nio/n8n:$N8N_VERSION
 
 USER root
 
-# Recopy pnpm
-COPY --from=base --chown=root:root --chmod=755 /root/.local/share/pnpm /root/.local/share/pnpm 
-
 # Create machine-id
 # This fixes OTEL log error messages
 RUN echo "Creating machine-id..." && \
