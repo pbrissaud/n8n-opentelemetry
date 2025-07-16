@@ -3,6 +3,8 @@ ARG N8N_VERSION="latest"
 FROM node:24-slim AS base
 RUN apt-get update -y && apt-get install -y wget 
 RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which sh)" sh -
+ENV PNPM_HOME="/root/.local/share/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
 
 FROM base AS prod-deps
 WORKDIR /app
