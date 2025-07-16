@@ -16,15 +16,13 @@ FROM docker.n8n.io/n8nio/n8n:$N8N_VERSION
 USER root
 
 # Recopy pnpm
-COPY --from=base $PNPM_HOME $PNPM_HOME
-RUN ln -s $PNPM_HOME/pnpm /usr/local/bin/pnpm
+COPY --from=base /root/.local/share/pnpm /usr/local/bin/pnpm
 
 # Create machine-id
 # This fixes OTEL log error messages
 RUN echo "Creating machine-id..." && \
     apk add dbus --no-cache && \
     dbus-uuidgen > /var/lib/dbus/machine-id
-
 
 # Install OpenTelemetry dependencies required by tracing.js
 RUN mkdir -p /opt/opentelemetry
