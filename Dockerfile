@@ -5,7 +5,6 @@ RUN apt-get update -y && apt-get install -y wget
 RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which sh)" sh -
 ENV PNPM_HOME="/root/.local/share/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
-RUN ln -s $PNPM_HOME/pnpm /usr/local/bin/pnpm
 
 FROM base AS prod-deps
 WORKDIR /app
@@ -15,6 +14,10 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-l
 FROM docker.n8n.io/n8nio/n8n:$N8N_VERSION
 
 USER root
+
+# Recopy pnpm
+COPY --from=base $PNPM_HOME $PNPM_HOME
+RUN ln -s $PNPM_HOME/pnpm /usr/local/bin/pnpm
 
 # Create machine-id
 # This fixes OTEL log error messages
