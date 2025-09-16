@@ -28,9 +28,9 @@ jobs:
       fail-fast: false
       matrix:
         n8n-version:
+          - '1.111.0'
           - '1.110.1'
           - '1.109.2'
-          - '1.109.1'
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
