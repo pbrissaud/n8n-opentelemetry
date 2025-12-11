@@ -72,10 +72,6 @@ def delete_version(version_id):
     # If personal user:
     # url = f"{API_URL}/users/{OWNER}/packages/{PACKAGE_TYPE}/{PACKAGE_NAME}/versions/{version_id}"
 
-    if DRY_RUN:
-        print(f"[DRY RUN] Would delete version ID: {version_id}")
-        return True
-
     try:
         response = requests.delete(url, headers=HEADERS)
         response.raise_for_status()
