@@ -68,9 +68,7 @@ def delete_version(version_id):
     """
     Deletes a specific package version by ID.
     """
-    url = f"{API_URL}/orgs/{OWNER}/packages/{PACKAGE_TYPE}/{PACKAGE_NAME}/versions/{version_id}"
-    # If personal user:
-    # url = f"{API_URL}/users/{OWNER}/packages/{PACKAGE_TYPE}/{PACKAGE_NAME}/versions/{version_id}"
+    url = f"{API_URL}/users/{OWNER}/packages/{PACKAGE_TYPE}/{PACKAGE_NAME}/versions/{version_id}"
 
     try:
         response = requests.delete(url, headers=HEADERS)
