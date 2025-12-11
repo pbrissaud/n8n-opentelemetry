@@ -26,9 +26,16 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
+      - name: Generate a token
+        uses: actions/create-github-app-token@v2
+        id: app-token
+        with:
+          app-id: ${{ vars.APP_ID }}
+          private-key: ${{ secrets.PRIVATE_KEY }}
+
       - name: Fetch latest n8n releases and update matrix
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           python .github/scripts/update_n8n_matrix.py
 
