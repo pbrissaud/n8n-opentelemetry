@@ -5,19 +5,15 @@ on:
   schedule:
     - cron: '0 0 * * 0'
 
+permissions:
+  packages: write
+
 jobs:
   clean-ghcr:
     runs-on: ubuntu-latest
     permissions:
       packages: write
     steps:
-      - name: Generate a token
-        uses: actions/create-github-app-token@v2
-        id: app-token
-        with:
-          app-id: ${{ vars.APP_ID }}
-          private-key: ${{ secrets.PRIVATE_KEY }}
-    
       - name: Checkout code
         uses: actions/checkout@v6
 
@@ -31,7 +27,7 @@ jobs:
 
       - name: Run Cleanup Script
         env:
-          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPO: ${{ github.repository }}
         run: |
           python .github/scripts/clean_ghcr.py
