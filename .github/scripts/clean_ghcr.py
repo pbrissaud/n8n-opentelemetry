@@ -3,8 +3,8 @@ import os
 import time
 
 TOKEN = os.getenv("GITHUB_TOKEN") 
-OWNER = os.getenv("OWNER") 
-PACKAGE_NAME = os.getenv("PACKAGE_NAME") 
+OWNER = os.getenv("REPO").split('/')[0] 
+PACKAGE_NAME = os.getenv("REPO").split('/')[1] 
 
 PACKAGE_TYPE = "container" 
 
