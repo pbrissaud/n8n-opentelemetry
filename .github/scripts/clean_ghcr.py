@@ -22,7 +22,7 @@ def get_untagged_versions():
     """
     print(f"Fetching versions for {OWNER}/{PACKAGE_NAME} ({PACKAGE_TYPE})...")
     
-    url = f"{API_URL}/users/{OWNER}/packages/{PACKAGE_TYPE}/{PACKAGE_NAME}/versions"
+    url = f"{API_URL}/user/packages/{PACKAGE_TYPE}/{PACKAGE_NAME}/versions"
 
     params = {
         "per_page": 100,
@@ -68,7 +68,7 @@ def delete_version(version_id):
     """
     Deletes a specific package version by ID.
     """
-    url = f"{API_URL}/users/{OWNER}/packages/{PACKAGE_TYPE}/{PACKAGE_NAME}/versions/{version_id}"
+    url = f"{API_URL}/user/packages/{PACKAGE_TYPE}/{PACKAGE_NAME}/versions/{version_id}"
 
     try:
         response = requests.delete(url, headers=HEADERS)
