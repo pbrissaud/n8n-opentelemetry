@@ -22,12 +22,7 @@ def get_untagged_versions():
     """
     print(f"Fetching versions for {OWNER}/{PACKAGE_NAME} ({PACKAGE_TYPE})...")
     
-    # Endpoint depends on whether it's an Org or a User
-    # Assuming Org based on 'n8n-io', change to /users/ if it's a personal account
-    url = f"{API_URL}/orgs/{OWNER}/packages/{PACKAGE_TYPE}/{PACKAGE_NAME}/versions"
-    
-    # If it's a personal user, uncomment this line instead:
-    # url = f"{API_URL}/users/{OWNER}/packages/{PACKAGE_TYPE}/{PACKAGE_NAME}/versions"
+    url = f"{API_URL}/users/{OWNER}/packages/{PACKAGE_TYPE}/{PACKAGE_NAME}/versions"
 
     params = {
         "per_page": 100,
