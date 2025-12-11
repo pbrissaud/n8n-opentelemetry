@@ -34,4 +34,4 @@ jobs:
           GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
           REPO: ${{ github.repository }}
         run: |
-          python scripts/clean_ghcr.py
+          python .github/scripts/clean_ghcr.py
