@@ -17,9 +17,8 @@ USER root
 
 # Create machine-id
 # This fixes OTEL log error messages
-RUN echo "Creating machine-id..." && \
-    apk add dbus --no-cache && \
-    dbus-uuidgen > /var/lib/dbus/machine-id
+RUN mkdir -p /var/lib/dbus && \
+    head -c 16 /dev/urandom | od -An -tx1 | tr -d ' \n' > /var/lib/dbus/machine-id
 
 # Install OpenTelemetry dependencies required by tracing.js
 RUN mkdir -p /opt/opentelemetry
