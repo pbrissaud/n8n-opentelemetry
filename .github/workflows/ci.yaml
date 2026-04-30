@@ -28,12 +28,12 @@ jobs:
       fail-fast: false
       matrix:
         n8n-version:
+          - '2.18.5'
           - '2.18.4'
           - '2.17.8'
-          - '2.17.7'
+          - '1.123.38'
           - '1.123.37'
           - '1.123.36'
-          - '1.123.35'
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
