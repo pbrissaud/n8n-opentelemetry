@@ -31,9 +31,9 @@ jobs:
           - '2.25.7'
           - '2.25.6'
           - '2.23.4'
+          - '1.123.56'
           - '1.123.55'
           - '1.123.54'
-          - '1.123.53'
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
