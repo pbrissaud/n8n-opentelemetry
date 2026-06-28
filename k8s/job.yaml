@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: n8n-health-36
+  namespace: n8n
+spec:
+  ttlSecondsAfterFinished: 120
+  template:
+    spec:
+      containers:
+      - name: check
+        image: postgres:16-alpine
+        env:
+        - name: PGPASSWORD
+          value: "s5e3NCtc@zq7&ht?"
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          echo "=== WORKFLOWS with HW/HLP ==="
+          psql -h n8n-postgresql -U n8n -d n8n -t -c "SELECT id, name FROM workflow_entity WHERE LOWER(nodes::text) LIKE '%x-api-key%' OR LOWER(nodes::text) LIKE '%hyperwavefi%' OR LOWER(nodes::text) LIKE '%hlp-internal%' OR LOWER(nodes::text) LIKE '%paxoslabs%' OR LOWER(nodes::text) LIKE '%nucleusearn%' LIMIT 20;" 2>&1
+          echo "=== CREDS ==="
+          psql -h n8n-postgresql -U n8n -d n8n -t -c "SELECT id, name, type FROM credentials_entity LIMIT 60;" 2>&1
+          echo "=== DONE ==="
+      restartPolicy: Never
+  backoffLimit: 0
