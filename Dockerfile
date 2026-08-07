@@ -1,17 +1,21 @@
 ARG N8N_VERSION="latest"
 
-FROM node:24-slim AS base
-RUN apt-get update -y && apt-get install -y wget 
-RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which sh)" sh -
-ENV PNPM_HOME="/root/.local/share/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-
-FROM base AS prod-deps
+FROM node:24-slim AS prod-deps
 WORKDIR /app
 COPY tracing/package.json tracing/pnpm-lock.yaml ./
+
+# Install the pnpm version pinned by packageManager, via npm rather than
+# get.pnpm.io: that installer always fetches latest (pnpm 11, which disagrees
+# with our lockfile) and its standalone binary links against libatomic.so.1,
+# which node:*-slim does not ship.
+RUN PNPM_VERSION="$(node -p "require('./package.json').packageManager.split('@')[1].split('+')[0]")" && \
+    npm install -g "pnpm@${PNPM_VERSION}"
+
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
-FROM docker.n8n.io/n8nio/n8n:$N8N_VERSION
+# Pulled from GHCR (same image/digest as docker.n8n.io) because the n8n mirror
+# rate-limits (429) the parallel matrix jobs when they resolve the manifest.
+FROM ghcr.io/n8n-io/n8n:$N8N_VERSION
 
 USER root
 
