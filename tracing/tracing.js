@@ -120,9 +120,11 @@ function awaitAttributes(detector) {
 function setupOpenTelemetryNodeSDK() {
   const sdk = new opentelemetry.NodeSDK({
     logRecordProcessors: [
-      new opentelemetry.logs.SimpleLogRecordProcessor(
-        new OTLPLogExporter(),
-      ),
+      // sdk-logs 0.221.0 takes an options object; passing the exporter
+      // positionally leaves it undefined and throws on every log export.
+      new opentelemetry.logs.SimpleLogRecordProcessor({
+        exporter: new OTLPLogExporter(),
+      }),
     ],
     // Fix for https://github.com/open-telemetry/opentelemetry-js/issues/4638
     // This may be deprecated in the future.
