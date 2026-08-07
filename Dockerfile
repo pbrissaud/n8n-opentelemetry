@@ -11,7 +11,9 @@ WORKDIR /app
 COPY tracing/package.json tracing/pnpm-lock.yaml ./
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
-FROM docker.n8n.io/n8nio/n8n:$N8N_VERSION
+# Pulled from GHCR (same image/digest as docker.n8n.io) because the n8n mirror
+# rate-limits (429) the parallel matrix jobs when they resolve the manifest.
+FROM ghcr.io/n8n-io/n8n:$N8N_VERSION
 
 USER root
 
