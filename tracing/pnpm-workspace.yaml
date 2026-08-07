@@ -1,2 +1,4 @@
-onlyBuiltDependencies:
-  - protobufjs
+# pnpm 11 renamed `onlyBuiltDependencies` to `allowBuilds`; protobufjs needs its
+# install script to build the OTLP protobuf serializers.
+allowBuilds:
+  protobufjs: true

@@ -2,12 +2,13 @@ ARG N8N_VERSION="latest"
 
 FROM node:24-slim AS prod-deps
 WORKDIR /app
-COPY tracing/package.json tracing/pnpm-lock.yaml ./
+# pnpm-workspace.yaml carries the allowBuilds settings; without it pnpm 11
+# refuses the install with ERR_PNPM_IGNORED_BUILDS.
+COPY tracing/package.json tracing/pnpm-lock.yaml tracing/pnpm-workspace.yaml ./
 
 # Install the pnpm version pinned by packageManager, via npm rather than
-# get.pnpm.io: that installer always fetches latest (pnpm 11, which disagrees
-# with our lockfile) and its standalone binary links against libatomic.so.1,
-# which node:*-slim does not ship.
+# get.pnpm.io: that installer always fetches latest, and its standalone binary
+# links against libatomic.so.1, which node:*-slim does not ship.
 RUN PNPM_VERSION="$(node -p "require('./package.json').packageManager.split('@')[1].split('+')[0]")" && \
     npm install -g "pnpm@${PNPM_VERSION}"
 
