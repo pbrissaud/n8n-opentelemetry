@@ -26,6 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      # Limit concurrent pushes to ghcr.io to avoid GitHub secondary rate limits
+      max-parallel: 3
       matrix:
         n8n-version:
           - '2.33.6'
