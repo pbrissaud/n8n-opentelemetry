@@ -30,12 +30,12 @@ jobs:
       max-parallel: 3
       matrix:
         n8n-version:
+          - '2.47.6'
           - '2.47.5'
           - '2.47.4'
-          - '2.47.3'
+          - '1.123.96'
           - '1.123.95'
           - '1.123.94'
-          - '1.123.93'
     steps:
       - name: Checkout code
         uses: actions/checkout@v7
