@@ -1,6 +1,6 @@
 ARG N8N_VERSION="latest"
 
-FROM node:24-slim AS prod-deps
+FROM node:26-slim AS prod-deps
 WORKDIR /app
 # pnpm-workspace.yaml carries the allowBuilds settings; without it pnpm 11
 # refuses the install with ERR_PNPM_IGNORED_BUILDS.
